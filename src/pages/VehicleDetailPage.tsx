@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getVehicle } from "../api/vehicles";
 import { StatusBadge } from "../components/StatusBadge";
-import type { Vehicle } from "../types";
 import { formatDate, formatDateTime, formatMileage } from "../utils/format";
 import { describeMaintenance } from "../utils/maintenance";
 import styles from "./VehicleDetailPage.module.css";
+import { useFetchVehicle } from "../hooks/useFetchVehicle";
 
 export function VehicleDetailPage() {
   const { id } = useParams();
   const vehicleId = Number(id);
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const { error, loading, vehicle } = useFetchVehicle(vehicleId);
 
-  useEffect(() => {
-    getVehicle(vehicleId).then(setVehicle);
-  }, [vehicleId]);
+  if (error) return <p className={styles.empty}>{error.message}</p>;
+
+  if (loading) {
+    return <p>Lade …</p>;
+  }
 
   if (!vehicle) {
-    return <p>Lade …</p>;
+    return <p className={styles.empty}>Ungültige.</p>;
   }
 
   return (

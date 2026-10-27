@@ -20,8 +20,19 @@ export async function getVehicles(
   return res.json();
 }
 
-export async function getVehicle(id: number): Promise<Vehicle> {
-  const res = await fetch(`${BASE_URL}/vehicles/${id}`);
+export async function getVehicle(
+  id: number,
+  signal?: AbortSignal,
+): Promise<Vehicle> {
+  const res = await fetch(`${BASE_URL}/vehicles/${id}`, {
+    signal,
+  });
+
+  if (!res.ok) {
+    console.error(`Failed to fetch vehicle ${id}: ${res.status}`);
+    throw new Error("Das Fahrzeug konnte nicht geladen werden.");
+  }
+
   return res.json();
 }
 
