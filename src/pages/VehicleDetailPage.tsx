@@ -14,7 +14,7 @@ export function VehicleDetailPage() {
 
   useEffect(() => {
     getVehicle(vehicleId).then(setVehicle);
-  }, []);
+  }, [vehicleId]);
 
   if (!vehicle) {
     return <p>Lade …</p>;
@@ -45,7 +45,9 @@ export function VehicleDetailPage() {
           <dt>Nächste Wartung</dt>
           <dd>
             {formatDate(vehicle.nextMaintenance)}{" "}
-            <span className={styles.hint}>({describeMaintenance(vehicle.nextMaintenance)})</span>
+            <span className={styles.hint}>
+              ({describeMaintenance(vehicle.nextMaintenance)})
+            </span>
           </dd>
         </div>
         <div>
@@ -57,7 +59,8 @@ export function VehicleDetailPage() {
           <dd>
             {vehicle.location.city}{" "}
             <span className={styles.hint}>
-              ({vehicle.location.lat.toFixed(4)}, {vehicle.location.lng.toFixed(4)})
+              ({vehicle.location.lat.toFixed(4)},{" "}
+              {vehicle.location.lng.toFixed(4)})
             </span>
           </dd>
         </div>
@@ -68,7 +71,11 @@ export function VehicleDetailPage() {
       </dl>
 
       <nav className={styles.pager}>
-        {vehicleId > 1 ? <Link to={`/vehicles/${vehicleId - 1}`}>← Vorheriges Fahrzeug</Link> : <span />}
+        {vehicleId > 1 ? (
+          <Link to={`/vehicles/${vehicleId - 1}`}>← Vorheriges Fahrzeug</Link>
+        ) : (
+          <span />
+        )}
         <Link to={`/vehicles/${vehicleId + 1}`}>Nächstes Fahrzeug →</Link>
       </nav>
     </section>
