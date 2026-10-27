@@ -13,6 +13,7 @@ export async function getVehicles(
   });
 
   if (!res.ok) {
+    console.error(`Failed to fetch vehicles: ${res.status}`);
     throw new Error(`Es konnten keine Fahrzeuge geladen werden: ${res.status}`);
   }
 
