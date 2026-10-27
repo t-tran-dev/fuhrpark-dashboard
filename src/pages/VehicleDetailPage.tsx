@@ -17,7 +17,9 @@ export function VehicleDetailPage() {
   }
 
   if (!vehicle) {
-    return <p className={styles.empty}>Ungültige.</p>;
+    return (
+      <p className={styles.empty}>Das Fahrzeug konnte nicht geladen werden</p>
+    );
   }
 
   return (
