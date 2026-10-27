@@ -12,12 +12,10 @@ export function VehicleListPage() {
 
   async function handleStatusChange(id: number, status: VehicleStatus) {
     const updated = await updateVehicle(id, { status });
-    const updatedVehicles = vehicles.map((vehicle) => {
-      if (vehicle.id === id) return updated;
-      return vehicle;
-    });
 
-    setVehicles(updatedVehicles);
+    setVehicles((prev) =>
+      prev.map((vehicle) => (vehicle.id === id ? updated : vehicle)),
+    );
   }
 
   const workshopCount = vehicles.filter((v) => v.status === "workshop").length;
