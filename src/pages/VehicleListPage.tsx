@@ -4,6 +4,7 @@ import { VehicleTable } from "../components/VehicleTable";
 import type { VehicleStatus } from "../types";
 import styles from "./VehicleListPage.module.css";
 import { useFetchVehicles } from "../hooks/useFetchVehicles";
+import { toIsoDate } from "../utils/format";
 
 export function VehicleListPage() {
   const [query, setQuery] = useState("");
@@ -19,7 +20,7 @@ export function VehicleListPage() {
     setVehicles(updatedVehicles);
   }
 
-  const today = new Date().toLocaleDateString("de-DE");
+  const today = toIsoDate(new Date());
   const workshopCount = vehicles.filter((v) => v.status === "workshop").length;
   const overdueCount = vehicles.filter((v) => v.nextMaintenance < today).length;
 

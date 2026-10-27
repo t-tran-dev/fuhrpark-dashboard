@@ -22,3 +22,10 @@ export function formatDateTime(isoTimestamp: string): string {
     timeStyle: "short",
   });
 }
+
+/** Date -> "2026-11-03" */
+export function toIsoDate(date: Date): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
