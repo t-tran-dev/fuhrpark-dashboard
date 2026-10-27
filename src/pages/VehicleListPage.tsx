@@ -19,11 +19,12 @@ export function VehicleListPage() {
 
   async function handleStatusChange(id: number, status: VehicleStatus) {
     const updated = await updateVehicle(id, { status });
-    const vehicle = vehicles.find((v) => v.id === id);
-    if (vehicle) {
-      vehicle.status = updated.status;
-      setVehicles(vehicles);
-    }
+    const updatedVehicles = vehicles.map((vehicle) => {
+      if (vehicle.id === id) return updated;
+      return vehicle;
+    });
+
+    setVehicles(updatedVehicles);
   }
 
   const today = new Date().toLocaleDateString("de-DE");
@@ -47,8 +48,8 @@ export function VehicleListPage() {
       </div>
 
       <p className={styles.summary}>
-        {vehicles.length} Fahrzeuge · {workshopCount} in der Werkstatt · {overdueCount} mit
-        überfälliger Wartung
+        {vehicles.length} Fahrzeuge · {workshopCount} in der Werkstatt ·{" "}
+        {overdueCount} mit überfälliger Wartung
       </p>
 
       <VehicleTable vehicles={vehicles} onStatusChange={handleStatusChange} />
