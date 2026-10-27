@@ -1,0 +1,102 @@
+:root {
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f9fafb;
+  --color-border: #e3e6ea;
+  --color-text: #1f2328;
+  --color-muted: #646c76;
+  --color-primary: #1d4ea3;
+  --color-header: #12233f;
+
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 16px;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input[type="search"],
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.app-header {
+  background: var(--color-header);
+  color: #fff;
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 56px;
+}
+
+.app-header__title {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.app-header__nav {
+  display: flex;
+  gap: 20px;
+}
+
+.app-header__nav a {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.app-header__nav a.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.app-main {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}

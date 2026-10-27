@@ -1,0 +1,23 @@
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.available {
+  background: #e6f4ea;
+  color: #1e6b34;
+}
+
+.in_use {
+  background: #e7effc;
+  color: #1d4ea3;
+}
+
+.workshop {
+  background: #fdf0e1;
+  color: #92500e;
+}

@@ -1,0 +1,55 @@
+.back {
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.plate {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 0 0 32px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.details dt {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+.details dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.hint {
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+}
