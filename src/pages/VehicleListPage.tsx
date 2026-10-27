@@ -1,34 +1,27 @@
-import { useEffect, useState } from "react";
-import { getVehicles, updateVehicle } from "../api/vehicles";
+import { useState } from "react";
+import { updateVehicle } from "../api/vehicles";
 import { VehicleTable } from "../components/VehicleTable";
-import type { Vehicle, VehicleStatus } from "../types";
+import type { VehicleStatus } from "../types";
 import styles from "./VehicleListPage.module.css";
+import { useFetchVehicles } from "../hooks/useFetchVehicles";
+import { isMaintenanceOverdue } from "../utils/maintenance";
 
 export function VehicleListPage() {
   const [query, setQuery] = useState("");
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    getVehicles(query).then((data) => {
-      setVehicles(data);
-      setLoading(false);
-    });
-  }, [query]);
+  const { vehicles, loading, error, setVehicles } = useFetchVehicles(query);
 
   async function handleStatusChange(id: number, status: VehicleStatus) {
     const updated = await updateVehicle(id, { status });
-    const vehicle = vehicles.find((v) => v.id === id);
-    if (vehicle) {
-      vehicle.status = updated.status;
-      setVehicles(vehicles);
-    }
+
+    setVehicles((prev) =>
+      prev.map((vehicle) => (vehicle.id === id ? updated : vehicle)),
+    );
   }
 
-  const today = new Date().toLocaleDateString("de-DE");
   const workshopCount = vehicles.filter((v) => v.status === "workshop").length;
-  const overdueCount = vehicles.filter((v) => v.nextMaintenance < today).length;
+  const overdueCount = vehicles.filter((v) =>
+    isMaintenanceOverdue(v.nextMaintenance),
+  ).length;
 
   return (
     <section>
@@ -47,11 +40,15 @@ export function VehicleListPage() {
       </div>
 
       <p className={styles.summary}>
-        {vehicles.length} Fahrzeuge · {workshopCount} in der Werkstatt · {overdueCount} mit
-        überfälliger Wartung
+        {vehicles.length} Fahrzeuge · {workshopCount} in der Werkstatt ·{" "}
+        {overdueCount} mit überfälliger Wartung
       </p>
 
-      <VehicleTable vehicles={vehicles} onStatusChange={handleStatusChange} />
+      <VehicleTable
+        error={error}
+        vehicles={vehicles}
+        onStatusChange={handleStatusChange}
+      />
     </section>
   );
 }

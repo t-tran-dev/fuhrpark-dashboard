@@ -1,23 +1,25 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getVehicle } from "../api/vehicles";
 import { StatusBadge } from "../components/StatusBadge";
-import type { Vehicle } from "../types";
 import { formatDate, formatDateTime, formatMileage } from "../utils/format";
 import { describeMaintenance } from "../utils/maintenance";
 import styles from "./VehicleDetailPage.module.css";
+import { useFetchVehicle } from "../hooks/useFetchVehicle";
 
 export function VehicleDetailPage() {
   const { id } = useParams();
   const vehicleId = Number(id);
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const { error, loading, vehicle } = useFetchVehicle(vehicleId);
 
-  useEffect(() => {
-    getVehicle(vehicleId).then(setVehicle);
-  }, []);
+  if (error) return <p className={styles.empty}>{error.message}</p>;
+
+  if (loading) {
+    return <p>Lade …</p>;
+  }
 
   if (!vehicle) {
-    return <p>Lade …</p>;
+    return (
+      <p className={styles.empty}>Das Fahrzeug konnte nicht geladen werden</p>
+    );
   }
 
   return (
@@ -45,7 +47,9 @@ export function VehicleDetailPage() {
           <dt>Nächste Wartung</dt>
           <dd>
             {formatDate(vehicle.nextMaintenance)}{" "}
-            <span className={styles.hint}>({describeMaintenance(vehicle.nextMaintenance)})</span>
+            <span className={styles.hint}>
+              ({describeMaintenance(vehicle.nextMaintenance)})
+            </span>
           </dd>
         </div>
         <div>
@@ -57,7 +61,8 @@ export function VehicleDetailPage() {
           <dd>
             {vehicle.location.city}{" "}
             <span className={styles.hint}>
-              ({vehicle.location.lat.toFixed(4)}, {vehicle.location.lng.toFixed(4)})
+              ({vehicle.location.lat.toFixed(4)},{" "}
+              {vehicle.location.lng.toFixed(4)})
             </span>
           </dd>
         </div>
@@ -68,7 +73,11 @@ export function VehicleDetailPage() {
       </dl>
 
       <nav className={styles.pager}>
-        {vehicleId > 1 ? <Link to={`/vehicles/${vehicleId - 1}`}>← Vorheriges Fahrzeug</Link> : <span />}
+        {vehicleId > 1 ? (
+          <Link to={`/vehicles/${vehicleId - 1}`}>← Vorheriges Fahrzeug</Link>
+        ) : (
+          <span />
+        )}
         <Link to={`/vehicles/${vehicleId + 1}`}>Nächstes Fahrzeug →</Link>
       </nav>
     </section>
