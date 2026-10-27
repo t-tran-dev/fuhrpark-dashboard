@@ -5,11 +5,17 @@ import { StatusBadge } from "./StatusBadge";
 import styles from "./VehicleTable.module.css";
 
 interface VehicleTableProps {
+  error: Error | null;
   vehicles: Vehicle[];
   onStatusChange: (id: number, status: VehicleStatus) => void;
 }
 
-export function VehicleTable({ vehicles, onStatusChange }: VehicleTableProps) {
+export function VehicleTable({
+  error,
+  vehicles,
+  onStatusChange,
+}: VehicleTableProps) {
+  if (error) return <p className={styles.empty}>{error.message}</p>;
   if (vehicles.length === 0) {
     return <p className={styles.empty}>Keine Fahrzeuge gefunden.</p>;
   }
@@ -47,7 +53,10 @@ export function VehicleTable({ vehicles, onStatusChange }: VehicleTableProps) {
                     aria-label={`Status von ${vehicle.plate} ändern`}
                     value={vehicle.status}
                     onChange={(event) =>
-                      onStatusChange(vehicle.id, event.target.value as VehicleStatus)
+                      onStatusChange(
+                        vehicle.id,
+                        event.target.value as VehicleStatus,
+                      )
                     }
                   >
                     {VEHICLE_STATUSES.map((status) => (
@@ -58,7 +67,9 @@ export function VehicleTable({ vehicles, onStatusChange }: VehicleTableProps) {
                   </select>
                 </div>
               </td>
-              <td className={styles.number}>{formatMileage(vehicle.mileage)}</td>
+              <td className={styles.number}>
+                {formatMileage(vehicle.mileage)}
+              </td>
               <td>{formatDate(vehicle.nextMaintenance)}</td>
               <td>{vehicle.location.city}</td>
             </tr>

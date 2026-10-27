@@ -1,21 +1,13 @@
-import { useEffect, useState } from "react";
-import { getVehicles, updateVehicle } from "../api/vehicles";
+import { useState } from "react";
+import { updateVehicle } from "../api/vehicles";
 import { VehicleTable } from "../components/VehicleTable";
-import type { Vehicle, VehicleStatus } from "../types";
+import type { VehicleStatus } from "../types";
 import styles from "./VehicleListPage.module.css";
+import { useFetchVehicles } from "../hooks/useFetchVehicles";
 
 export function VehicleListPage() {
   const [query, setQuery] = useState("");
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    getVehicles(query).then((data) => {
-      setVehicles(data);
-      setLoading(false);
-    });
-  }, [query]);
+  const { vehicles, loading, error, setVehicles } = useFetchVehicles(query);
 
   async function handleStatusChange(id: number, status: VehicleStatus) {
     const updated = await updateVehicle(id, { status });
@@ -52,7 +44,11 @@ export function VehicleListPage() {
         {overdueCount} mit überfälliger Wartung
       </p>
 
-      <VehicleTable vehicles={vehicles} onStatusChange={handleStatusChange} />
+      <VehicleTable
+        error={error}
+        vehicles={vehicles}
+        onStatusChange={handleStatusChange}
+      />
     </section>
   );
 }
