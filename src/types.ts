@@ -44,3 +44,15 @@ export type VehicleFilters = {
   vehicleStatus: VehicleStatusFilter;
   vehicleType: VehicleTypeFilter;
 };
+
+export type VehicleSortKey = keyof Pick<
+  Vehicle,
+  "plate" | "mileage" | "nextMaintenance"
+>;
+
+export type SortDirection = "asc" | "desc";
+
+export type VehicleSortConfig = {
+  key: VehicleSortKey;
+  direction: SortDirection;
+};

@@ -62,3 +62,40 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
 }
+
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sortButton span {
+  opacity: 0.5;
+}
+
+.sortButton:hover {
+  color: var(--color-primary, #2563eb);
+}
+
+.sortButton:focus-visible {
+  outline: 2px solid var(--color-primary, #2563eb);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.table th[aria-sort="ascending"] .sortButton,
+.table th[aria-sort="descending"] .sortButton {
+  color: var(--color-primary, #2563eb);
+}
+
+.table th[aria-sort="ascending"] .sortButton span,
+.table th[aria-sort="descending"] .sortButton span {
+  opacity: 1;
+}
