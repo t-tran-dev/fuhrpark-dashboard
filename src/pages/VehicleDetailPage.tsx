@@ -1,8 +1,12 @@
 import { Link, useParams } from "react-router-dom";
-import { StatusBadge } from "../components/StatusBadge";
+import { StatusBadge } from "../components";
 import { useFetchVehicle } from "../hooks";
-import { formatDate, formatDateTime, formatMileage } from "../utils/format";
-import { describeMaintenance } from "../utils/maintenance";
+import {
+  describeMaintenance,
+  formatDate,
+  formatDateTime,
+  formatMileage,
+} from "../utils";
 import styles from "./VehicleDetailPage.module.css";
 
 export function VehicleDetailPage() {

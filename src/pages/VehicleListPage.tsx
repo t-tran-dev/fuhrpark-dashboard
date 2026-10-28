@@ -1,48 +1,32 @@
 import { updateVehicle } from "../api/vehicles";
-import { VehicleTable } from "../components/VehicleTable";
+import { VehicleListToolbar, VehicleTable } from "../components";
 import { useFetchVehicles, useUrlParams } from "../hooks";
 import {
   ALL_OPTION,
   VEHICLE_URL_KEYS,
-  VehicleSortConfig,
-  VehicleSortKey,
+  type VehicleSortConfig,
+  type VehicleSortKey,
   type VehicleStatus,
-  VehicleStatusFilter,
-  VehicleTypeFilter,
 } from "../types";
-import { isMaintenanceOverdue } from "../utils/maintenance";
-import styles from "./VehicleListPage.module.css";
 import {
+  isMaintenanceOverdue,
   isVehicleStatus,
   isVehicleType,
   isVehicleSortKey,
-} from "../utils/vehiclesValidation";
-
-const VehicleStatusFilterOptionsMap: Record<VehicleStatusFilter, string> = {
-  all: "Alle",
-  available: "Verfügbar",
-  in_use: "Im Einsatz",
-  workshop: "Werkstatt",
-};
-
-const VehicleTypeFilterOptionsMap: Record<VehicleTypeFilter, string> = {
-  all: "Alle",
-  PKW: "PKW",
-  Transporter: "Transporter",
-  LKW: "LKW",
-};
+} from "../utils";
+import styles from "./VehicleListPage.module.css";
 
 export function VehicleListPage() {
   const { searchParams, updateParams } = useUrlParams();
-  const query = searchParams.get("q") ?? "";
+  const query = searchParams.get(VEHICLE_URL_KEYS.query) ?? "";
 
   const rawStatus = searchParams.get(VEHICLE_URL_KEYS.status);
   const rawType = searchParams.get(VEHICLE_URL_KEYS.type);
   const rawSort = searchParams.get(VEHICLE_URL_KEYS.sort);
   const rawDirection = searchParams.get(VEHICLE_URL_KEYS.direction);
 
-  const vehicleStatus = isVehicleStatus(rawStatus) ? rawStatus : "all";
-  const vehicleType = isVehicleType(rawType) ? rawType : "all";
+  const vehicleStatus = isVehicleStatus(rawStatus) ? rawStatus : ALL_OPTION;
+  const vehicleType = isVehicleType(rawType) ? rawType : ALL_OPTION;
 
   const sort: VehicleSortConfig = {
     key: isVehicleSortKey(rawSort) ? rawSort : "plate",
@@ -68,8 +52,8 @@ export function VehicleListPage() {
       sort.key === key && sort.direction === "asc" ? "desc" : "asc";
 
     updateParams({
-      sort: key,
-      direction,
+      [VEHICLE_URL_KEYS.sort]: key,
+      [VEHICLE_URL_KEYS.direction]: direction,
     });
   };
 
@@ -78,63 +62,17 @@ export function VehicleListPage() {
     isMaintenanceOverdue(v.nextMaintenance),
   ).length;
 
-  const vehicleStatusFilterSelectOptions = Object.entries(
-    VehicleStatusFilterOptionsMap,
-  ).map(([value, label]) => (
-    <option key={value} value={value}>
-      {label}
-    </option>
-  ));
-
-  const vehicleTypeFilterSelectOptions = Object.entries(
-    VehicleTypeFilterOptionsMap,
-  ).map(([value, label]) => (
-    <option key={value} value={value}>
-      {label}
-    </option>
-  ));
-
   return (
     <section>
       <h1>Fahrzeuge</h1>
 
-      <div className={styles.toolbar}>
-        <input
-          type="search"
-          className={styles.search}
-          placeholder="Kennzeichen, Modell, Ort oder Fahrer/in suchen"
-          aria-label="Fahrzeuge durchsuchen"
-          value={query}
-          onChange={(event) => updateParams({ q: event.target.value }, true)}
-        />
-
-        <select
-          aria-label="Nach Status filtern"
-          value={vehicleStatus}
-          onChange={(event) =>
-            updateParams({
-              status:
-                event.target.value === ALL_OPTION ? null : event.target.value,
-            })
-          }
-        >
-          {vehicleStatusFilterSelectOptions}
-        </select>
-
-        <select
-          aria-label="Nach Fahrzeugtyp filtern"
-          value={vehicleType}
-          onChange={(event) =>
-            updateParams({
-              type:
-                event.target.value === ALL_OPTION ? null : event.target.value,
-            })
-          }
-        >
-          {vehicleTypeFilterSelectOptions}
-        </select>
-        {loading && <span className={styles.loading}>Lade …</span>}
-      </div>
+      <VehicleListToolbar
+        query={query}
+        vehicleStatus={vehicleStatus}
+        vehicleType={vehicleType}
+        loading={loading}
+        updateParams={updateParams}
+      />
 
       <p className={styles.summary}>
         {vehicles.length} Fahrzeuge · {workshopCount} in der Werkstatt ·{" "}
