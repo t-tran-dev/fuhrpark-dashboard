@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   VEHICLE_STATUSES,
   type VehicleSortConfig,
@@ -29,6 +29,7 @@ export function VehicleTable({
   onStatusChange,
   onSortChange,
 }: VehicleTableProps) {
+  const location = useLocation();
   if (error) return <p className={styles.empty}>{error.message}</p>;
   if (vehicles.length === 0) {
     return <p className={styles.empty}>Keine Fahrzeuge gefunden.</p>;
@@ -123,7 +124,13 @@ export function VehicleTable({
           {sortedVehicles.map((vehicle) => (
             <tr key={vehicle.id}>
               <td>
-                <Link to={`/vehicles/${vehicle.id}`} className={styles.plate}>
+                <Link
+                  to={`/vehicles/${vehicle.id}`}
+                  state={{
+                    returnTo: location.pathname + location.search,
+                  }}
+                  className={styles.plate}
+                >
                   {vehicle.plate}
                 </Link>
               </td>

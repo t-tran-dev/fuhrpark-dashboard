@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { StatusBadge } from "../components";
 import { useFetchVehicle } from "../hooks";
 import {
@@ -14,6 +14,13 @@ export function VehicleDetailPage() {
   const vehicleId = Number(id);
   const { error, loading, vehicle } = useFetchVehicle(vehicleId);
 
+  const location = useLocation();
+
+  const returnTo =
+    typeof location.state?.returnTo === "string"
+      ? location.state.returnTo
+      : "/";
+
   if (error) return <p className={styles.empty}>{error.message}</p>;
 
   if (loading) {
@@ -28,7 +35,7 @@ export function VehicleDetailPage() {
 
   return (
     <section>
-      <Link to="/" className={styles.back}>
+      <Link to={returnTo} className={styles.back}>
         ← Zurück zur Liste
       </Link>
 
