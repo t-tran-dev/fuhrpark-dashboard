@@ -99,3 +99,12 @@
 .table th[aria-sort="descending"] .sortButton span {
   opacity: 1;
 }
+
+.saveStatus {
+  display: inline-block;
+  inline-size: 12ch;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}

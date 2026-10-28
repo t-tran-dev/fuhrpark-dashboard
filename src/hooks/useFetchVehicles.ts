@@ -12,6 +12,11 @@ export const useFetchVehicles = ({
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refetch = () => {
+    setRefreshKey((current) => current + 1);
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -52,7 +57,7 @@ export const useFetchVehicles = ({
       clearTimeout(debounceTimer);
       controller.abort();
     };
-  }, [query, vehicleStatus, vehicleType]);
+  }, [query, vehicleStatus, vehicleType, refreshKey]);
 
-  return { vehicles, loading, error, setVehicles };
+  return { vehicles, loading, error, refetch };
 };

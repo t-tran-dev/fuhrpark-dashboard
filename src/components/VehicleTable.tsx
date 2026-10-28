@@ -12,7 +12,9 @@ import styles from "./VehicleTable.module.css";
 
 interface VehicleTableProps {
   error: Error | null;
+  loading: boolean;
   sort: VehicleSortConfig;
+  updatingIds: ReadonlySet<number>;
   vehicles: Vehicle[];
   onStatusChange: (id: number, status: VehicleStatus) => void;
   onSortChange: (key: VehicleSortKey) => void;
@@ -20,7 +22,9 @@ interface VehicleTableProps {
 
 export function VehicleTable({
   error,
+  loading,
   sort,
+  updatingIds,
   vehicles,
   onStatusChange,
   onSortChange,
@@ -133,6 +137,7 @@ export function VehicleTable({
                   <select
                     aria-label={`Status von ${vehicle.plate} ändern`}
                     value={vehicle.status}
+                    disabled={loading || updatingIds.has(vehicle.id)}
                     onChange={(event) =>
                       onStatusChange(
                         vehicle.id,
@@ -146,6 +151,10 @@ export function VehicleTable({
                       </option>
                     ))}
                   </select>
+
+                  <span className={styles.saveStatus} role="status">
+                    {updatingIds.has(vehicle.id) ? "Speichert …" : ""}
+                  </span>
                 </div>
               </td>
               <td className={styles.number}>

@@ -71,7 +71,7 @@ export const VehicleListToolbar: React.FC<VehicleListToolbarProps> = ({
         value={vehicleStatus}
         onChange={(event) =>
           updateParams({
-            status:
+            [VEHICLE_URL_KEYS.status]:
               event.target.value === ALL_OPTION ? null : event.target.value,
           })
         }
@@ -84,7 +84,8 @@ export const VehicleListToolbar: React.FC<VehicleListToolbarProps> = ({
         value={vehicleType}
         onChange={(event) =>
           updateParams({
-            type: event.target.value === ALL_OPTION ? null : event.target.value,
+            [VEHICLE_URL_KEYS.type]:
+              event.target.value === ALL_OPTION ? null : event.target.value,
           })
         }
       >

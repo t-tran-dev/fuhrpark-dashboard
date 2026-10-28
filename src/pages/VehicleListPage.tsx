@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { updateVehicle } from "../api/vehicles";
 import { VehicleListToolbar, VehicleTable } from "../components";
 import { useFetchVehicles, useUrlParams } from "../hooks";
@@ -33,18 +34,45 @@ export function VehicleListPage() {
     direction: rawDirection === "desc" ? "desc" : "asc",
   };
 
-  const { vehicles, loading, error, setVehicles } = useFetchVehicles({
+  const [updateError, setUpdateError] = useState<string | null>(null);
+
+  const [updatingIds, setUpdatingIds] = useState<Set<number>>(() => new Set());
+
+  const { vehicles, loading, error, refetch } = useFetchVehicles({
     query,
     vehicleStatus,
     vehicleType,
   });
 
   async function handleStatusChange(id: number, status: VehicleStatus) {
-    const updated = await updateVehicle(id, { status });
+    if (updatingIds.has(id)) return;
 
-    setVehicles((prev) =>
-      prev.map((vehicle) => (vehicle.id === id ? updated : vehicle)),
-    );
+    setUpdateError(null);
+    setUpdatingIds((current) => new Set(current).add(id));
+
+    const vehicle = vehicles.find((vehicle) => vehicle.id === id);
+    const vehicleLabel = vehicle?.plate ?? `Fahrzeug ${id}`;
+
+    try {
+      await updateVehicle(id, { status });
+      refetch();
+    } catch (error) {
+      console.error("Failed to update vehicle status", {
+        vehicleId: id,
+        status,
+        error,
+      });
+
+      setUpdateError(
+        `Der Status von ${vehicleLabel} konnte nicht geändert werden. Bitte erneut versuchen.`,
+      );
+    } finally {
+      setUpdatingIds((current) => {
+        const next = new Set(current);
+        next.delete(id);
+        return next;
+      });
+    }
   }
 
   const handleSort = (key: VehicleSortKey) => {
@@ -79,12 +107,19 @@ export function VehicleListPage() {
         {overdueCount} mit überfälliger Wartung
       </p>
 
+      {updateError && (
+        <p role="alert" className={styles.error}>
+          {updateError}
+        </p>
+      )}
       <VehicleTable
         error={error}
         vehicles={vehicles}
         onStatusChange={handleStatusChange}
         sort={sort}
         onSortChange={handleSort}
+        updatingIds={updatingIds}
+        loading={loading}
       />
     </section>
   );
