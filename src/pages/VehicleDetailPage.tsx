@@ -21,15 +21,25 @@ export function VehicleDetailPage() {
       ? location.state.returnTo
       : "/";
 
-  if (error) return <p className={styles.empty}>{error.message}</p>;
-
-  if (loading) {
-    return <p>Lade …</p>;
-  }
-
-  if (!vehicle) {
+  if (error || loading || !vehicle) {
     return (
-      <p className={styles.empty}>Das Fahrzeug konnte nicht geladen werden</p>
+      <section>
+        <Link to={returnTo} className={styles.back}>
+          ← Zurück zur Liste
+        </Link>
+
+        {error ? (
+          <p role="alert" className={styles.empty}>
+            {error.message}
+          </p>
+        ) : loading ? (
+          <p role="status">Lade …</p>
+        ) : (
+          <p className={styles.empty}>
+            Das Fahrzeug konnte nicht geladen werden.
+          </p>
+        )}
+      </section>
     );
   }
 
@@ -54,6 +64,7 @@ export function VehicleDetailPage() {
           <dt>Kilometerstand</dt>
           <dd>{formatMileage(vehicle.mileage)}</dd>
         </div>
+
         <div>
           <dt>Nächste Wartung</dt>
           <dd>
@@ -63,10 +74,12 @@ export function VehicleDetailPage() {
             </span>
           </dd>
         </div>
+
         <div>
           <dt>Fahrer/in</dt>
           <dd>{vehicle.driver ?? "–"}</dd>
         </div>
+
         <div>
           <dt>Standort</dt>
           <dd>
@@ -77,6 +90,7 @@ export function VehicleDetailPage() {
             </span>
           </dd>
         </div>
+
         <div>
           <dt>Zuletzt geändert</dt>
           <dd>{formatDateTime(vehicle.updatedAt)}</dd>
@@ -85,11 +99,22 @@ export function VehicleDetailPage() {
 
       <nav className={styles.pager}>
         {vehicleId > 1 ? (
-          <Link to={`/vehicles/${vehicleId - 1}`}>← Vorheriges Fahrzeug</Link>
+          <Link
+            to={`/vehicles/${vehicleId - 1}`}
+            state={{ returnTo }}
+          >
+            ← Vorheriges Fahrzeug
+          </Link>
         ) : (
           <span />
         )}
-        <Link to={`/vehicles/${vehicleId + 1}`}>Nächstes Fahrzeug →</Link>
+
+        <Link
+          to={`/vehicles/${vehicleId + 1}`}
+          state={{ returnTo }}
+        >
+          Nächstes Fahrzeug →
+        </Link>
       </nav>
     </section>
   );
