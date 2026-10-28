@@ -1,30 +1,51 @@
-import { Link, useParams } from "react-router-dom";
-import { StatusBadge } from "../components/StatusBadge";
-import { formatDate, formatDateTime, formatMileage } from "../utils/format";
-import { describeMaintenance } from "../utils/maintenance";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { StatusBadge } from "../components";
+import { useFetchVehicle } from "../hooks";
+import {
+  describeMaintenance,
+  formatDate,
+  formatDateTime,
+  formatMileage,
+} from "../utils";
 import styles from "./VehicleDetailPage.module.css";
-import { useFetchVehicle } from "../hooks/useFetchVehicle";
 
 export function VehicleDetailPage() {
   const { id } = useParams();
   const vehicleId = Number(id);
   const { error, loading, vehicle } = useFetchVehicle(vehicleId);
 
-  if (error) return <p className={styles.empty}>{error.message}</p>;
+  const location = useLocation();
 
-  if (loading) {
-    return <p>Lade …</p>;
-  }
+  const returnTo =
+    typeof location.state?.returnTo === "string"
+      ? location.state.returnTo
+      : "/";
 
-  if (!vehicle) {
+  if (error || loading || !vehicle) {
     return (
-      <p className={styles.empty}>Das Fahrzeug konnte nicht geladen werden</p>
+      <section>
+        <Link to={returnTo} className={styles.back}>
+          ← Zurück zur Liste
+        </Link>
+
+        {error ? (
+          <p role="alert" className={styles.empty}>
+            {error.message}
+          </p>
+        ) : loading ? (
+          <p role="status">Lade …</p>
+        ) : (
+          <p className={styles.empty}>
+            Das Fahrzeug konnte nicht geladen werden.
+          </p>
+        )}
+      </section>
     );
   }
 
   return (
     <section>
-      <Link to="/" className={styles.back}>
+      <Link to={returnTo} className={styles.back}>
         ← Zurück zur Liste
       </Link>
 
@@ -43,6 +64,7 @@ export function VehicleDetailPage() {
           <dt>Kilometerstand</dt>
           <dd>{formatMileage(vehicle.mileage)}</dd>
         </div>
+
         <div>
           <dt>Nächste Wartung</dt>
           <dd>
@@ -52,10 +74,12 @@ export function VehicleDetailPage() {
             </span>
           </dd>
         </div>
+
         <div>
           <dt>Fahrer/in</dt>
           <dd>{vehicle.driver ?? "–"}</dd>
         </div>
+
         <div>
           <dt>Standort</dt>
           <dd>
@@ -66,6 +90,7 @@ export function VehicleDetailPage() {
             </span>
           </dd>
         </div>
+
         <div>
           <dt>Zuletzt geändert</dt>
           <dd>{formatDateTime(vehicle.updatedAt)}</dd>
@@ -74,11 +99,22 @@ export function VehicleDetailPage() {
 
       <nav className={styles.pager}>
         {vehicleId > 1 ? (
-          <Link to={`/vehicles/${vehicleId - 1}`}>← Vorheriges Fahrzeug</Link>
+          <Link
+            to={`/vehicles/${vehicleId - 1}`}
+            state={{ returnTo }}
+          >
+            ← Vorheriges Fahrzeug
+          </Link>
         ) : (
           <span />
         )}
-        <Link to={`/vehicles/${vehicleId + 1}`}>Nächstes Fahrzeug →</Link>
+
+        <Link
+          to={`/vehicles/${vehicleId + 1}`}
+          state={{ returnTo }}
+        >
+          Nächstes Fahrzeug →
+        </Link>
       </nav>
     </section>
   );

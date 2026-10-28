@@ -1,12 +1,36 @@
-import type { Vehicle, VehiclePatch } from "../types";
+import {
+  QUERY_KEY,
+  type QueryProperty,
+  type VehicleFilters,
+  type Vehicle,
+  type VehiclePatch,
+} from "../types";
 
 const BASE_URL = "/api";
 
-export async function getVehicles(
-  signal: AbortSignal,
-  query = "",
-): Promise<Vehicle[]> {
-  const params = query ? `?q=${encodeURIComponent(query)}` : "";
+type GetVehicleProps = {
+  signal: AbortSignal;
+} & VehicleFilters;
+
+export async function getVehicles({
+  signal,
+  ...queryProps
+}: GetVehicleProps): Promise<Vehicle[]> {
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(queryProps)) {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      value !== "all"
+    ) {
+      searchParams.set(QUERY_KEY[key as QueryProperty], String(value));
+    }
+  }
+
+  const queryString = searchParams.toString();
+  const params = queryString ? `?${queryString}` : "";
 
   const res = await fetch(`${BASE_URL}/vehicles${params}`, {
     signal,
@@ -45,5 +69,11 @@ export async function updateVehicle(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(patch),
   });
+
+  if (!res.ok) {
+    console.error(`Failed to update vehicle ${id}: ${res.status}`);
+    throw new Error(`Das Fahrzeug konnte nicht aktualisiert werden`);
+  }
+
   return res.json();
 }

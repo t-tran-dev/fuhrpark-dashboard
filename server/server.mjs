@@ -130,13 +130,22 @@ async function handle(req, res) {
   }
 
   if (url.pathname === "/api/vehicles" && req.method === "GET") {
-    const query = url.searchParams.get("q") ?? "";
-    return send(
-      res,
-      200,
-      vehicles.filter((vehicle) => matchesQuery(vehicle, query)),
-    );
-  }
+  const query = url.searchParams.get("q") ?? "";
+  const status = url.searchParams.get("vs");
+  const type = url.searchParams.get("vt");
+
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    const matchesSearch = matchesQuery(vehicle, query);
+    const matchesStatus =
+      !status || status === "all" || vehicle.status === status;
+    const matchesType =
+      !type || type === "all" || vehicle.type === type;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  return send(res, 200, filteredVehicles);
+}
 
   const match = url.pathname.match(/^\/api\/vehicles\/([^/]+)$/);
   if (match) {

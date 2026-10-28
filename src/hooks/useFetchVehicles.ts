@@ -1,13 +1,22 @@
 import { useState, useEffect } from "react";
 import { getVehicles } from "../api/vehicles";
-import { Vehicle } from "../types";
+import type { Vehicle, VehicleFilters } from "../types";
 
 const DEBOUNCE_DELAY = 300;
 
-export const useFetchVehicles = (query: string) => {
+export const useFetchVehicles = ({
+  query,
+  vehicleStatus,
+  vehicleType,
+}: VehicleFilters) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refetch = () => {
+    setRefreshKey((current) => current + 1);
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -17,7 +26,12 @@ export const useFetchVehicles = (query: string) => {
 
     const fetchVehicles = async () => {
       try {
-        const vehicles = await getVehicles(controller.signal, query);
+        const vehicles = await getVehicles({
+          signal: controller.signal,
+          query,
+          vehicleStatus,
+          vehicleType,
+        });
 
         if (!controller.signal.aborted) {
           setVehicles(vehicles);
@@ -43,7 +57,7 @@ export const useFetchVehicles = (query: string) => {
       clearTimeout(debounceTimer);
       controller.abort();
     };
-  }, [query]);
+  }, [query, vehicleStatus, vehicleType, refreshKey]);
 
-  return { vehicles, loading, error, setVehicles };
+  return { vehicles, loading, error, refetch };
 };

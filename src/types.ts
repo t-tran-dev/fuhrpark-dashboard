@@ -24,4 +24,47 @@ export interface Vehicle {
   updatedAt: string;
 }
 
-export type VehiclePatch = Partial<Pick<Vehicle, "status" | "mileage" | "nextMaintenance" | "driver">>;
+export type VehiclePatch = Partial<
+  Pick<Vehicle, "status" | "mileage" | "nextMaintenance" | "driver">
+>;
+
+export enum QUERY_KEY {
+  query = "q",
+  vehicleStatus = "vs",
+  vehicleType = "vt",
+}
+
+export type QueryProperty = keyof typeof QUERY_KEY;
+
+export enum VEHICLE_URL_KEYS {
+  query = "q",
+  status = "status",
+  type = "type",
+  sort = "sort",
+  direction = "direction",
+}
+export const ALL_OPTION = "all";
+
+export type VehicleStatusFilter = typeof ALL_OPTION | VehicleStatus;
+export type VehicleTypeFilter = typeof ALL_OPTION | VehicleType;
+
+export type VehicleFilters = {
+  query: string;
+  vehicleStatus: VehicleStatusFilter;
+  vehicleType: VehicleTypeFilter;
+};
+
+export const VEHICLE_SORT_KEYS = [
+  "plate",
+  "mileage",
+  "nextMaintenance",
+] as const satisfies readonly (keyof Vehicle)[];
+
+export type VehicleSortKey = (typeof VEHICLE_SORT_KEYS)[number];
+
+export type SortDirection = "asc" | "desc";
+
+export type VehicleSortConfig = {
+  key: VehicleSortKey;
+  direction: SortDirection;
+};
