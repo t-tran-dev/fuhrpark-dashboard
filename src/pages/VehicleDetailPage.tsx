@@ -1,9 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { StatusBadge } from "../components/StatusBadge";
+import { useFetchVehicle } from "../hooks";
 import { formatDate, formatDateTime, formatMileage } from "../utils/format";
 import { describeMaintenance } from "../utils/maintenance";
 import styles from "./VehicleDetailPage.module.css";
-import { useFetchVehicle } from "../hooks/useFetchVehicle";
 
 export function VehicleDetailPage() {
   const { id } = useParams();

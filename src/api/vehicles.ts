@@ -1,12 +1,36 @@
-import type { Vehicle, VehiclePatch } from "../types";
+import { UseFetchVehiclesProps } from "../hooks";
+import {
+  QUERY_KEY,
+  QueryProperty,
+  type Vehicle,
+  type VehiclePatch,
+} from "../types";
 
 const BASE_URL = "/api";
 
-export async function getVehicles(
-  signal: AbortSignal,
-  query = "",
-): Promise<Vehicle[]> {
-  const params = query ? `?q=${encodeURIComponent(query)}` : "";
+type GetVehicleProps = {
+  signal: AbortSignal;
+} & UseFetchVehiclesProps;
+
+export async function getVehicles({
+  signal,
+  ...queryProps
+}: GetVehicleProps): Promise<Vehicle[]> {
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(queryProps)) {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      value !== "all"
+    ) {
+      searchParams.set(QUERY_KEY[key as QueryProperty], String(value));
+    }
+  }
+
+  const queryString = searchParams.toString();
+  const params = queryString ? `?${queryString}` : "";
 
   const res = await fetch(`${BASE_URL}/vehicles${params}`, {
     signal,

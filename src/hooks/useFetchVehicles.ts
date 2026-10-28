@@ -1,10 +1,24 @@
 import { useState, useEffect } from "react";
 import { getVehicles } from "../api/vehicles";
 import { Vehicle } from "../types";
+import {
+  VehicleStatusFilter,
+  VehicleTypeFilter,
+} from "../pages/VehicleListPage";
 
 const DEBOUNCE_DELAY = 300;
 
-export const useFetchVehicles = (query: string) => {
+export type UseFetchVehiclesProps = {
+  query: string;
+  vehicleStatus: VehicleStatusFilter;
+  vehicleType: VehicleTypeFilter;
+};
+
+export const useFetchVehicles = ({
+  query,
+  vehicleStatus,
+  vehicleType,
+}: UseFetchVehiclesProps) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -17,7 +31,12 @@ export const useFetchVehicles = (query: string) => {
 
     const fetchVehicles = async () => {
       try {
-        const vehicles = await getVehicles(controller.signal, query);
+        const vehicles = await getVehicles({
+          signal: controller.signal,
+          query,
+          vehicleStatus,
+          vehicleType,
+        });
 
         if (!controller.signal.aborted) {
           setVehicles(vehicles);
@@ -43,7 +62,7 @@ export const useFetchVehicles = (query: string) => {
       clearTimeout(debounceTimer);
       controller.abort();
     };
-  }, [query]);
+  }, [query, vehicleStatus, vehicleType]);
 
   return { vehicles, loading, error, setVehicles };
 };

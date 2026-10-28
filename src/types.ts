@@ -24,4 +24,14 @@ export interface Vehicle {
   updatedAt: string;
 }
 
-export type VehiclePatch = Partial<Pick<Vehicle, "status" | "mileage" | "nextMaintenance" | "driver">>;
+export type VehiclePatch = Partial<
+  Pick<Vehicle, "status" | "mileage" | "nextMaintenance" | "driver">
+>;
+
+export enum QUERY_KEY {
+  query = "q",
+  vehicleStatus = "vs",
+  vehicleType = "vt",
+}
+
+export type QueryProperty = keyof typeof QUERY_KEY;
