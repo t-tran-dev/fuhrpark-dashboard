@@ -30,9 +30,16 @@ export function VehicleTable({
   onSortChange,
 }: VehicleTableProps) {
   const location = useLocation();
-  if (error) return <p className={styles.empty}>{error.message}</p>;
+  if (error) {
+    return <p className={styles.empty}>{error.message}</p>;
+  }
+
   if (vehicles.length === 0) {
-    return <p className={styles.empty}>Keine Fahrzeuge gefunden.</p>;
+    return (
+      <p className={styles.empty}>
+        {loading ? "Lade Fahrzeuge …" : "Keine Fahrzeuge gefunden."}
+      </p>
+    );
   }
 
   const sortedVehicles = [...vehicles].sort((a, b) => {
