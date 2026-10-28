@@ -45,10 +45,13 @@ export type VehicleFilters = {
   vehicleType: VehicleTypeFilter;
 };
 
-export type VehicleSortKey = keyof Pick<
-  Vehicle,
-  "plate" | "mileage" | "nextMaintenance"
->;
+export const VEHICLE_SORT_KEYS = [
+  "plate",
+  "mileage",
+  "nextMaintenance",
+] as const satisfies readonly (keyof Vehicle)[];
+
+export type VehicleSortKey = (typeof VEHICLE_SORT_KEYS)[number];
 
 export type SortDirection = "asc" | "desc";
 
