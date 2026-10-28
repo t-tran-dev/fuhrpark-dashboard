@@ -35,3 +35,12 @@ export enum QUERY_KEY {
 }
 
 export type QueryProperty = keyof typeof QUERY_KEY;
+
+export type VehicleStatusFilter = "all" | VehicleStatus;
+export type VehicleTypeFilter = "all" | VehicleType;
+
+export type VehicleFilters = {
+  query: string;
+  vehicleStatus: VehicleStatusFilter;
+  vehicleType: VehicleTypeFilter;
+};

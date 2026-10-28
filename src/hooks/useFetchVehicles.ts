@@ -1,24 +1,14 @@
 import { useState, useEffect } from "react";
 import { getVehicles } from "../api/vehicles";
-import { Vehicle } from "../types";
-import {
-  VehicleStatusFilter,
-  VehicleTypeFilter,
-} from "../pages/VehicleListPage";
+import { Vehicle, VehicleFilters } from "../types";
 
 const DEBOUNCE_DELAY = 300;
-
-export type UseFetchVehiclesProps = {
-  query: string;
-  vehicleStatus: VehicleStatusFilter;
-  vehicleType: VehicleTypeFilter;
-};
 
 export const useFetchVehicles = ({
   query,
   vehicleStatus,
   vehicleType,
-}: UseFetchVehiclesProps) => {
+}: VehicleFilters) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

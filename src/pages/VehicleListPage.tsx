@@ -2,14 +2,15 @@ import { useState } from "react";
 import { updateVehicle } from "../api/vehicles";
 import { VehicleTable } from "../components/VehicleTable";
 import { useFetchVehicles } from "../hooks";
-import { VehicleType, type VehicleStatus } from "../types";
+import {
+  VehicleStatusFilter,
+  VehicleTypeFilter,
+  type VehicleStatus,
+} from "../types";
 import { isMaintenanceOverdue } from "../utils/maintenance";
 import styles from "./VehicleListPage.module.css";
 
 const ALL_OPTION = "all";
-
-export type VehicleStatusFilter = typeof ALL_OPTION | VehicleStatus;
-export type VehicleTypeFilter = typeof ALL_OPTION | VehicleType;
 
 const VehicleStatusFilterOptionsMap: Record<VehicleStatusFilter, string> = {
   all: "Alle",

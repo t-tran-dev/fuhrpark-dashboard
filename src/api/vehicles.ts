@@ -1,7 +1,7 @@
-import { UseFetchVehiclesProps } from "../hooks";
 import {
   QUERY_KEY,
   QueryProperty,
+  VehicleFilters,
   type Vehicle,
   type VehiclePatch,
 } from "../types";
@@ -10,7 +10,7 @@ const BASE_URL = "/api";
 
 type GetVehicleProps = {
   signal: AbortSignal;
-} & UseFetchVehiclesProps;
+} & VehicleFilters;
 
 export async function getVehicles({
   signal,
