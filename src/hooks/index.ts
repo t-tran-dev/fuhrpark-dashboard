@@ -1,5 +1,3 @@
 export { useFetchVehicle } from "./useFetchVehicle";
-export {
-  type UseFetchVehiclesProps,
-  useFetchVehicles,
-} from "./useFetchVehicles";
+export { useFetchVehicles } from "./useFetchVehicles";
+export { useUrlParams } from "./useUrlParams";

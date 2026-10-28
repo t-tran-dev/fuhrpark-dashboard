@@ -1,16 +1,22 @@
-import { useState } from "react";
 import { updateVehicle } from "../api/vehicles";
 import { VehicleTable } from "../components/VehicleTable";
-import { useFetchVehicles } from "../hooks";
+import { useFetchVehicles, useUrlParams } from "../hooks";
 import {
+  ALL_OPTION,
+  VEHICLE_URL_KEYS,
+  VehicleSortConfig,
+  VehicleSortKey,
+  type VehicleStatus,
   VehicleStatusFilter,
   VehicleTypeFilter,
-  type VehicleStatus,
 } from "../types";
 import { isMaintenanceOverdue } from "../utils/maintenance";
 import styles from "./VehicleListPage.module.css";
-
-const ALL_OPTION = "all";
+import {
+  isVehicleStatus,
+  isVehicleType,
+  isVehicleSortKey,
+} from "../utils/vehiclesValidation";
 
 const VehicleStatusFilterOptionsMap: Record<VehicleStatusFilter, string> = {
   all: "Alle",
@@ -27,10 +33,22 @@ const VehicleTypeFilterOptionsMap: Record<VehicleTypeFilter, string> = {
 };
 
 export function VehicleListPage() {
-  const [query, setQuery] = useState("");
-  const [vehicleStatus, setVehicleStatus] =
-    useState<VehicleStatusFilter>(ALL_OPTION);
-  const [vehicleType, setVehicleType] = useState<VehicleTypeFilter>(ALL_OPTION);
+  const { searchParams, updateParams } = useUrlParams();
+  const query = searchParams.get("q") ?? "";
+
+  const rawStatus = searchParams.get(VEHICLE_URL_KEYS.status);
+  const rawType = searchParams.get(VEHICLE_URL_KEYS.type);
+  const rawSort = searchParams.get(VEHICLE_URL_KEYS.sort);
+  const rawDirection = searchParams.get(VEHICLE_URL_KEYS.direction);
+
+  const vehicleStatus = isVehicleStatus(rawStatus) ? rawStatus : "all";
+  const vehicleType = isVehicleType(rawType) ? rawType : "all";
+
+  const sort: VehicleSortConfig = {
+    key: isVehicleSortKey(rawSort) ? rawSort : "plate",
+    direction: rawDirection === "desc" ? "desc" : "asc",
+  };
+
   const { vehicles, loading, error, setVehicles } = useFetchVehicles({
     query,
     vehicleStatus,
@@ -44,6 +62,16 @@ export function VehicleListPage() {
       prev.map((vehicle) => (vehicle.id === id ? updated : vehicle)),
     );
   }
+
+  const handleSort = (key: VehicleSortKey) => {
+    const direction =
+      sort.key === key && sort.direction === "asc" ? "desc" : "asc";
+
+    updateParams({
+      sort: key,
+      direction,
+    });
+  };
 
   const workshopCount = vehicles.filter((v) => v.status === "workshop").length;
   const overdueCount = vehicles.filter((v) =>
@@ -77,20 +105,30 @@ export function VehicleListPage() {
           placeholder="Kennzeichen, Modell, Ort oder Fahrer/in suchen"
           aria-label="Fahrzeuge durchsuchen"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => updateParams({ q: event.target.value }, true)}
         />
+
         <select
+          aria-label="Nach Status filtern"
           value={vehicleStatus}
           onChange={(event) =>
-            setVehicleStatus(event.target.value as VehicleStatusFilter)
+            updateParams({
+              status:
+                event.target.value === ALL_OPTION ? null : event.target.value,
+            })
           }
         >
           {vehicleStatusFilterSelectOptions}
         </select>
+
         <select
+          aria-label="Nach Fahrzeugtyp filtern"
           value={vehicleType}
           onChange={(event) =>
-            setVehicleType(event.target.value as VehicleTypeFilter)
+            updateParams({
+              type:
+                event.target.value === ALL_OPTION ? null : event.target.value,
+            })
           }
         >
           {vehicleTypeFilterSelectOptions}
@@ -107,6 +145,8 @@ export function VehicleListPage() {
         error={error}
         vehicles={vehicles}
         onStatusChange={handleStatusChange}
+        sort={sort}
+        onSortChange={handleSort}
       />
     </section>
   );

@@ -36,8 +36,17 @@ export enum QUERY_KEY {
 
 export type QueryProperty = keyof typeof QUERY_KEY;
 
-export type VehicleStatusFilter = "all" | VehicleStatus;
-export type VehicleTypeFilter = "all" | VehicleType;
+export enum VEHICLE_URL_KEYS {
+  query = "q",
+  status = "status",
+  type = "type",
+  sort = "sort",
+  direction = "direction",
+}
+export const ALL_OPTION = "all";
+
+export type VehicleStatusFilter = typeof ALL_OPTION | VehicleStatus;
+export type VehicleTypeFilter = typeof ALL_OPTION | VehicleType;
 
 export type VehicleFilters = {
   query: string;

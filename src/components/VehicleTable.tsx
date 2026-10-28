@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   VEHICLE_STATUSES,
@@ -13,32 +12,23 @@ import styles from "./VehicleTable.module.css";
 
 interface VehicleTableProps {
   error: Error | null;
+  sort: VehicleSortConfig;
   vehicles: Vehicle[];
   onStatusChange: (id: number, status: VehicleStatus) => void;
+  onSortChange: (key: VehicleSortKey) => void;
 }
 
 export function VehicleTable({
   error,
+  sort,
   vehicles,
   onStatusChange,
+  onSortChange,
 }: VehicleTableProps) {
-  const [sort, setSort] = useState<VehicleSortConfig>({
-    key: "plate",
-    direction: "asc",
-  });
-
   if (error) return <p className={styles.empty}>{error.message}</p>;
   if (vehicles.length === 0) {
     return <p className={styles.empty}>Keine Fahrzeuge gefunden.</p>;
   }
-
-  const handleSort = (key: VehicleSortKey) => {
-    setSort((current) => ({
-      key,
-      direction:
-        current.key === key && current.direction === "asc" ? "desc" : "asc",
-    }));
-  };
 
   const sortedVehicles = [...vehicles].sort((a, b) => {
     let comparison: number;
@@ -83,7 +73,7 @@ export function VehicleTable({
               <button
                 type="button"
                 className={styles.sortButton}
-                onClick={() => handleSort("plate")}
+                onClick={() => onSortChange("plate")}
               >
                 Kennzeichen{" "}
                 <span aria-hidden="true">{getSortIndicator("plate")}</span>
@@ -102,7 +92,7 @@ export function VehicleTable({
               <button
                 type="button"
                 className={styles.sortButton}
-                onClick={() => handleSort("mileage")}
+                onClick={() => onSortChange("mileage")}
               >
                 Kilometerstand{" "}
                 <span aria-hidden="true">{getSortIndicator("mileage")}</span>
@@ -113,7 +103,7 @@ export function VehicleTable({
               <button
                 type="button"
                 className={styles.sortButton}
-                onClick={() => handleSort("nextMaintenance")}
+                onClick={() => onSortChange("nextMaintenance")}
               >
                 Nächste Wartung{" "}
                 <span aria-hidden="true">
