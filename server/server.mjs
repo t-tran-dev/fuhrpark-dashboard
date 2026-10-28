@@ -129,16 +129,6 @@ async function handle(req, res) {
     return send(res, 500, { error: "Interner Serverfehler" });
   }
 
-  //TODO: Remove this when the replacement works
-  // if (url.pathname === "/api/vehicles" && req.method === "GET") {
-  //   const query = url.searchParams.get("q") ?? "";
-  //   return send(
-  //     res,
-  //     200,
-  //     vehicles.filter((vehicle) => matchesQuery(vehicle, query)),
-  //   );
-  // }
-
   if (url.pathname === "/api/vehicles" && req.method === "GET") {
   const query = url.searchParams.get("q") ?? "";
   const status = url.searchParams.get("vs");

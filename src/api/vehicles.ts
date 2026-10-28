@@ -1,7 +1,7 @@
 import {
   QUERY_KEY,
-  QueryProperty,
-  VehicleFilters,
+  type QueryProperty,
+  type VehicleFilters,
   type Vehicle,
   type VehiclePatch,
 } from "../types";
@@ -69,5 +69,11 @@ export async function updateVehicle(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(patch),
   });
+
+  if (!res.ok) {
+    console.error(`Failed to update vehicle ${id}: ${res.status}`);
+    throw new Error(`Das Fahrzeug konnte nicht aktualisiert werden`);
+  }
+
   return res.json();
 }

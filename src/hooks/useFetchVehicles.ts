@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getVehicles } from "../api/vehicles";
-import { Vehicle, VehicleFilters } from "../types";
+import type { Vehicle, VehicleFilters } from "../types";
 
 const DEBOUNCE_DELAY = 300;
 
